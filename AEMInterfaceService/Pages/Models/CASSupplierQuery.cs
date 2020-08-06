@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace CASInterfaceService.Pages.Models
+namespace AEMInterfaceService.Pages.Models
 {
     public class CASSupplierQuery
     {

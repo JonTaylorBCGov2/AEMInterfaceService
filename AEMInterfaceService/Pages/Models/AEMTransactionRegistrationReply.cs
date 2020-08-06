@@ -2,7 +2,7 @@
 
 namespace AEMInterfaceService.Pages.Models
 {
-    public class CornetTransactionRegistrationReply
+    public class AEMTransactionRegistrationReply
     {
         String responseCode;
         public String ResponseCode

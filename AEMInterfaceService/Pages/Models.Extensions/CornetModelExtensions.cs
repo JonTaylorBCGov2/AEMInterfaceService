@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace CASInterfaceService.Pages.Models.Extensions
+namespace AEMInterfaceService.Pages.Models.Extensions
 {
     public static class CornetModelExtensions
     {

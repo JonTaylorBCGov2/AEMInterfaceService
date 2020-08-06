@@ -6,7 +6,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
-using CASInterfaceService.Pages.Models;
+using AEMInterfaceService.Pages.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
@@ -14,7 +14,7 @@ using Newtonsoft.Json.Linq;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
-namespace CASInterfaceService.Pages.Controllers
+namespace AEMInterfaceService.Pages.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]

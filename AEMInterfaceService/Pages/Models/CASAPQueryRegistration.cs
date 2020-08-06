@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace CASInterfaceService.Pages.Models
+namespace AEMInterfaceService.Pages.Models
 {
     public class CASAPQueryRegistration
     {

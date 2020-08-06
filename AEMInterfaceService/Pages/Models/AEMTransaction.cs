@@ -5,8 +5,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace AEMInterfaceService.Pages.Models
 {
-
-    public class CornetTransaction
+    public class AEMTransaction
     {
         public Int64 EventMessageID;
         [Required]
@@ -40,8 +39,8 @@ namespace AEMInterfaceService.Pages.Models
             set { EventDTM = value; }
         }
 
-        List<CornetTransactionEventData> EventData;
-        public List<CornetTransactionEventData> event_data
+        List<AEMTransactionEventData> EventData;
+        public List<AEMTransactionEventData> event_data
         {
             get { return EventData; }
             set { EventData = value; }

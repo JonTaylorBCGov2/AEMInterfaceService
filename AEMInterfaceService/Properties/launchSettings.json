@@ -15,7 +15,7 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
-    "CASInterfaceService": {
+    "AEMInterfaceService": {
       "commandName": "Project",
       "launchBrowser": true,
       "environmentVariables": {

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace CASInterfaceService.Pages.Models
+namespace AEMInterfaceService.Pages.Models
 {
     public class StudentRegistration
     {

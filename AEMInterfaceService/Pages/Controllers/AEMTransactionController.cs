@@ -22,7 +22,7 @@ namespace AEMInterfaceService.Pages.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class CornetTransactionController : Controller
+    public class AEMTransactionController : Controller
     {
         private string URL = "";
         private string TokenURL = "";
@@ -32,7 +32,7 @@ namespace AEMInterfaceService.Pages.Controllers
         private readonly IConfiguration _configuration;
         //private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public CornetTransactionController(IConfiguration configuration)//, IHttpContextAccessor httpContextAccessor)
+        public AEMTransactionController(IConfiguration configuration)//, IHttpContextAccessor httpContextAccessor)
         {
             _configuration = configuration;
             //_httpContextAccessor = httpContextAccessor;
@@ -41,14 +41,14 @@ namespace AEMInterfaceService.Pages.Controllers
 
         // POST: api/<controller>
         [HttpPost]
-        public CornetTransactionRegistrationReply RegisterCornetTransaction(CornetTransaction cornetTransaction)
+        public AEMTransactionRegistrationReply RegisterAEMTransaction(AEMTransaction aemTransaction)
         {
-            Console.WriteLine(DateTime.Now + " In RegisterCornetTransaction");
-            CornetTransactionRegistrationReply cornetregreply = new CornetTransactionRegistrationReply();
-            CornetTransactionRegistration.getInstance().Add(cornetTransaction);
+            Console.WriteLine(DateTime.Now + " In RegisterAEMTransaction");
+            AEMTransactionRegistrationReply cornetregreply = new AEMTransactionRegistrationReply();
+            AEMTransactionRegistration.getInstance().Add(aemTransaction);
             Console.WriteLine(DateTime.Now + " Received data from Cornet");
 
-            var t = Task.Run(() => CallDynamicsWithCornetData(_configuration, cornetTransaction));
+            var t = Task.Run(() => CallDynamicsWithAEMData(_configuration, aemTransaction));
             t.Wait();
             Console.WriteLine(DateTime.Now + " Sent data to Dynamics");
 
@@ -90,22 +90,22 @@ namespace AEMInterfaceService.Pages.Controllers
 
         }
 
-        private static async Task<string> CallDynamicsWithCornetData(IConfiguration configuration, CornetTransaction model)
+        private static async Task<string> CallDynamicsWithAEMData(IConfiguration configuration, AEMTransaction model)
         {
-            Console.WriteLine(DateTime.Now + " In CallDynamicsWithCornetData");
+            Console.WriteLine(DateTime.Now + " In CallDynamicsWithAEMData");
             HttpClient httpClient = null;
             try
             {
-                var cornetData = model.ToCornetDynamicsModel();
+                var aemData = model.ToAEMDynamicsModel();
                 JsonSerializerSettings settings = new JsonSerializerSettings();
                 settings.NullValueHandling = NullValueHandling.Ignore;
-                var cornetJson = JsonConvert.SerializeObject(cornetData, settings);
-                cornetJson = cornetJson.Replace("odatatype", "@odata.type");
+                var aemJson = JsonConvert.SerializeObject(aemData, settings);
+                aemJson = aemJson.Replace("odatatype", "@odata.type");
 
                 // Get results into the tuple
                 var endpointAction = "vsd_CreateCORNETNotifications";
                 Console.WriteLine(DateTime.Now + " Set endpoint " + endpointAction);
-                var tuple = await GetDynamicsHttpClientNew(configuration, cornetJson, endpointAction);
+                var tuple = await GetDynamicsHttpClientNew(configuration, aemJson, endpointAction);
                 Console.WriteLine(DateTime.Now + " Got result from Dynamics");
 
                 string tempResult = tuple.Item1.ToString();

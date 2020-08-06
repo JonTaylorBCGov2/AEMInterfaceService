@@ -5,7 +5,7 @@ namespace AEMInterfaceService.Pages.Models
 {
     // CBCORVSC-64: New data model for Cornet Transactions - Event Data
 
-    public class CornetTransactionEventData
+    public class AEMTransactionEventData
     {
         String DataElementNM;
         [Required]

@@ -11,7 +11,7 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CASInterfaceService.Pages.Models
+namespace AEMInterfaceService.Pages.Models
 {
     public class CASAPTransactionRegistration
     {
