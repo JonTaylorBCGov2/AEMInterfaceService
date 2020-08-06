@@ -92,14 +92,14 @@
       "displayName": "Name",
       "description": "The name assigned to all of the resources defined in this template.",
       "required": true,
-      "value": "cas-interface-service"
+      "value": "aem-interface-service"
     },
     {
       "name": "GIT_REPO_URL",
       "displayName": "Git Repo URL",
       "description": "The URL to your GIT repo.",
       "required": true,
-      "value": "https://github.com/JonTaylorBCGov/CASInterfaceService"
+      "value": "https://github.com/JonTaylorBCGov/AEMInterfaceService"
     },
     {
       "name": "GIT_REF",
@@ -141,7 +141,7 @@
       "displayName": "DotNet Startup Project",
       "description": "The path to the startup project for the .Net application.",
       "required": true,
-      "value": "CASInterfaceService/CASInterfaceService.csproj"
+      "value": "AEMInterfaceService/AEMInterfaceService.csproj"
     },
     {
       "name": "OUTPUT_IMAGE_TAG",
