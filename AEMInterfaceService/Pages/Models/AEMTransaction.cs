@@ -7,43 +7,68 @@ namespace AEMInterfaceService.Pages.Models
 {
     public class AEMTransaction
     {
-        public Int64 EventMessageID;
+        public string AEMApp;
         [Required]
-        public Int64 event_message_id
+        public string aem_app
         {
-            get { return EventMessageID; }
-            set { EventMessageID = value; }
+            get { return AEMApp; }
+            set { AEMApp = value; }
         }
 
-        String TargetSystemCD;
+        public string AEMForm;
         [Required]
-        public String target_system_cd
+        public string aem_form
         {
-            get { return TargetSystemCD; }
-            set { TargetSystemCD = value; }
+            get { return AEMForm; }
+            set { AEMForm = value; }
         }
 
-        String MessageEventTypeCD;
+        public string AEMXMLData;
         [Required]
-        public String message_event_type_cd
+        public string aem_xml_data
         {
-            get { return MessageEventTypeCD; }
-            set { MessageEventTypeCD = value; }
+            get { return AEMXMLData; }
+            set { AEMXMLData = value; }
         }
 
-        DateTime EventDTM;
-        [Required]
-        public DateTime event_dtm
-        {
-            get { return EventDTM; }
-            set { EventDTM = value; }
-        }
+        //// TODO: Set this up for whatever is sent from Dynamics
+        //public Int64 EventMessageID;
+        //[Required]
+        //public Int64 event_message_id
+        //{
+        //    get { return EventMessageID; }
+        //    set { EventMessageID = value; }
+        //}
 
-        List<AEMTransactionEventData> EventData;
-        public List<AEMTransactionEventData> event_data
-        {
-            get { return EventData; }
-            set { EventData = value; }
-        }
+        //String TargetSystemCD;
+        //[Required]
+        //public String target_system_cd
+        //{
+        //    get { return TargetSystemCD; }
+        //    set { TargetSystemCD = value; }
+        //}
+
+        //String MessageEventTypeCD;
+        //[Required]
+        //public String message_event_type_cd
+        //{
+        //    get { return MessageEventTypeCD; }
+        //    set { MessageEventTypeCD = value; }
+        //}
+
+        //DateTime EventDTM;
+        //[Required]
+        //public DateTime event_dtm
+        //{
+        //    get { return EventDTM; }
+        //    set { EventDTM = value; }
+        //}
+
+        //List<AEMTransactionEventData> EventData;
+        //public List<AEMTransactionEventData> event_data
+        //{
+        //    get { return EventData; }
+        //    set { EventData = value; }
+        //}
     }
 }

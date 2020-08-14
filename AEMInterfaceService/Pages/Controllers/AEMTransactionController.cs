@@ -15,6 +15,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using AEMInterfaceService.Pages.Models.Extensions;
 using Microsoft.AspNetCore.Http;
+using Oracle.ManagedDataAccess.Client;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -44,18 +45,89 @@ namespace AEMInterfaceService.Pages.Controllers
         public AEMTransactionRegistrationReply RegisterAEMTransaction(AEMTransaction aemTransaction)
         {
             Console.WriteLine(DateTime.Now + " In RegisterAEMTransaction");
-            AEMTransactionRegistrationReply cornetregreply = new AEMTransactionRegistrationReply();
-            AEMTransactionRegistration.getInstance().Add(aemTransaction);
-            Console.WriteLine(DateTime.Now + " Received data from Cornet");
 
-            var t = Task.Run(() => CallDynamicsWithAEMData(_configuration, aemTransaction));
+            // Connect to DB
+            var builder = new ConfigurationBuilder()
+                .AddEnvironmentVariables()
+                .AddUserSecrets<Program>(); // must also define a project guid for secrets in the .cspro – add tag <UserSecretsId> containing a guid
+            var Configuration = builder.Build();
+
+            string conString = Configuration["ORACLE_CONNECTION_STRING"];
+
+            OracleConnection con = new OracleConnection();
+            con.ConnectionString = conString;
+            con.Open();
+
+            // First get the GUID
+            // ==================
+            string guidSql = Configuration["AEM_GUID"];
+            OracleCommand guidCmd = new OracleCommand(guidSql, con);
+            guidCmd.CommandType = System.Data.CommandType.StoredProcedure;
+
+            // Assign the parameter ot be passed
+            guidCmd.Parameters.Add("XMLString", OracleDbType.Varchar2).Value = aemTransaction.AEMXMLData;
+
+            // Add output parameter
+            guidCmd.Parameters.Add("vGUID", OracleDbType.Varchar2, 2000);
+            guidCmd.Parameters["vGUID"].Direction = System.Data.ParameterDirection.Output;
+
+            con.Open();
+            OracleDataAdapter guidDa = new OracleDataAdapter(guidCmd);
+            guidCmd.ExecuteNonQuery();
+
+            // Response should be:
+            string dbGuid = guidCmd.Parameters["vGUID"].Value.ToString();
+
+            // ==================
+
+            // Use GUID to get document URL 
+            // ============================
+            string sql = Configuration["AEM_URL"];
+            OracleCommand cmd = new OracleCommand(sql, con);
+            cmd.CommandType = System.Data.CommandType.StoredProcedure;
+
+            // Add output parameter
+            cmd.Parameters.Add("vSUCCESS", OracleDbType.Varchar2, 2000);
+            cmd.Parameters["vSUCCESS"].Direction = System.Data.ParameterDirection.Output;
+
+            con.Open();
+            OracleDataAdapter da = new OracleDataAdapter(cmd);
+            cmd.ExecuteNonQuery();
+
+            // Response should be:
+            string dbResult = cmd.Parameters["vSUCCESS"].Value.ToString();
+
+            // Replace variables with proper parameters
+            dbResult = dbResult.Replace("<<APP>>", aemTransaction.AEMApp);
+            dbResult = dbResult.Replace("<<FORM>>", aemTransaction.AEMForm);
+            dbResult = dbResult.Replace("<<TICKET>>", dbGuid);
+
+            // Launch the web page - for testing
+            //System.Diagnostics.Process.Start(dbResult);
+            // ============================
+
+            //OracleDataReader dr = cmd.ExecuteReader();
+            //dr.Read();
+            //// dr.GetString(0);     
+
+            // Collect information for API call
+
+            // Call API aquired from DB including parameters
+
+
+
+            AEMTransactionRegistrationReply aemregreply = new AEMTransactionRegistrationReply();
+            AEMTransactionRegistration.getInstance().Add(aemTransaction);
+            Console.WriteLine(DateTime.Now + " Received data from Dynamics");
+
+            var t = Task.Run(() => CallAEMWithDynamicsData(_configuration, aemTransaction));
             t.Wait();
             Console.WriteLine(DateTime.Now + " Sent data to Dynamics");
 
             if (t.Result.Contains("Cornet Notification "))
             {
-                cornetregreply.ResponseCode = "200";
-                cornetregreply.ResponseMessage = "Success";
+                aemregreply.ResponseCode = "200";
+                aemregreply.ResponseMessage = dbResult;
                 Console.WriteLine(DateTime.Now + " Response Success");
             }
             else
@@ -71,9 +143,9 @@ namespace AEMInterfaceService.Pages.Controllers
                 //}
                 //else
                 //{
-                    cornetregreply.ResponseMessage = "Failure";
-                    cornetregreply.ResponseCode = t.Result;
-                    Console.WriteLine(DateTime.Now + " Response Fail");
+                aemregreply.ResponseMessage = "Failure";
+                aemregreply.ResponseCode = t.Result;
+                Console.WriteLine(DateTime.Now + " Response Fail");
                 //}
             }
 
@@ -86,7 +158,13 @@ namespace AEMInterfaceService.Pages.Controllers
             //this.HttpContext.Response.StatusCode = 444;
 
             Console.WriteLine(DateTime.Now + " Exit RegisterCornetTransaction");
-            return cornetregreply;
+            return aemregreply;
+
+        }
+        private static async Task<string> CallAEMWithDynamicsData(IConfiguration configuration, AEMTransaction model)
+        {
+            Console.WriteLine(DateTime.Now + " In CallAEMWithDynamicsData");
+            return "success";
 
         }
 
