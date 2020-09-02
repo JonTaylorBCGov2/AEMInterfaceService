@@ -55,9 +55,13 @@ namespace AEMInterfaceService.Pages.Controllers
 
             string conString = Configuration["ORACLE_CONNECTION_STRING"];
 
+            Console.WriteLine(DateTime.Now + " Found Oracle Connection String");
+
             OracleConnection con = new OracleConnection();
             con.ConnectionString = conString;
             con.Open();
+
+            Console.WriteLine(DateTime.Now + " Opened Oracle Connection");
 
             // First get the GUID
             // ==================
@@ -69,6 +73,8 @@ namespace AEMInterfaceService.Pages.Controllers
             guidCmd.CommandType = System.Data.CommandType.Text;
             guidCmd.CommandText = guidSql;
 
+            Console.WriteLine(DateTime.Now + " Got first sql for GUID: " + guidSql);
+
             // Add output parameter - NOTE, all parameters must be in order they appear in function
             guidCmd.Parameters.Add("vGUID", OracleDbType.Varchar2, 2000);
             guidCmd.Parameters["vGUID"].Direction = System.Data.ParameterDirection.Output;
@@ -76,6 +82,8 @@ namespace AEMInterfaceService.Pages.Controllers
             // Assign the parameter ot be passed
             guidCmd.Parameters.Add("documentContentText", OracleDbType.Clob).Value = aemTransaction.AEMXMLData;
             guidCmd.Parameters.Add("userID", OracleDbType.Varchar2).Value = "COAST";
+
+            Console.WriteLine(DateTime.Now + " Added all parameters");
 
             //con.Open();
             OracleDataAdapter guidDa = new OracleDataAdapter(guidCmd);
@@ -86,6 +94,8 @@ namespace AEMInterfaceService.Pages.Controllers
             // Response should be:
             string dbGuid = guidCmd.Parameters["vGUID"].Value.ToString();
 
+            Console.WriteLine(DateTime.Now + " Got GUID");
+
             // ==================
 
             // Use GUID to get document URL 
@@ -94,9 +104,13 @@ namespace AEMInterfaceService.Pages.Controllers
             OracleCommand cmd = new OracleCommand(sql, con);
             cmd.CommandType = System.Data.CommandType.Text;
 
+            Console.WriteLine(DateTime.Now + " Got second SQL for AEM: " + sql);
+
             // Add output parameter
             cmd.Parameters.Add("vSUCCESS", OracleDbType.Varchar2, 2000);
             cmd.Parameters["vSUCCESS"].Direction = System.Data.ParameterDirection.Output;
+
+            Console.WriteLine(DateTime.Now + " Added all parameters");
 
             //con.Open();
             OracleDataAdapter da = new OracleDataAdapter(cmd);
@@ -105,10 +119,14 @@ namespace AEMInterfaceService.Pages.Controllers
             // Response should be:
             string dbResult = cmd.Parameters["vSUCCESS"].Value.ToString();
 
+            Console.WriteLine(DateTime.Now + " Got dbResult: " + dbResult);
+
             // Replace variables with proper parameters
             dbResult = dbResult.Replace("<<APP>>", aemTransaction.AEMApp);
             dbResult = dbResult.Replace("<<FORM>>", aemTransaction.AEMForm);
             dbResult = dbResult.Replace("<<TICKET>>", dbGuid);
+
+            Console.WriteLine(DateTime.Now + " Updated <<>> Text");
 
             // Launch the web page - for testing
             //System.Diagnostics.Process.Start(dbResult);
@@ -126,6 +144,7 @@ namespace AEMInterfaceService.Pages.Controllers
 
             AEMTransactionRegistrationReply aemregreply = new AEMTransactionRegistrationReply();
             AEMTransactionRegistration.getInstance().Add(aemTransaction);
+
             Console.WriteLine(DateTime.Now + " Received data from Dynamics");
 
             var t = Task.Run(() => CallAEMWithDynamicsData(_configuration, aemTransaction));
