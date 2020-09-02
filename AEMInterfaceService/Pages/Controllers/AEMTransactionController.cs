@@ -16,6 +16,7 @@ using Newtonsoft.Json.Linq;
 using AEMInterfaceService.Pages.Models.Extensions;
 using Microsoft.AspNetCore.Http;
 using Oracle.ManagedDataAccess.Client;
+using System.Data;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -61,19 +62,26 @@ namespace AEMInterfaceService.Pages.Controllers
             // First get the GUID
             // ==================
             string guidSql = Configuration["AEM_GUID"];
-            OracleCommand guidCmd = new OracleCommand(guidSql, con);
-            guidCmd.CommandType = System.Data.CommandType.StoredProcedure;
+            //string guidSql = "select * from adobe_form_properties where court_services_form_no = 'LETTER'"; // THIS WAS A TEST
+            //OracleCommand guidCmd = new OracleCommand(guidSql, con);
+            OracleCommand guidCmd = new OracleCommand();
+            guidCmd.Connection = con;
+            guidCmd.CommandType = System.Data.CommandType.Text;
+            guidCmd.CommandText = guidSql;
 
-            // Assign the parameter ot be passed
-            guidCmd.Parameters.Add("XMLString", OracleDbType.Varchar2).Value = aemTransaction.AEMXMLData;
-
-            // Add output parameter
+            // Add output parameter - NOTE, all parameters must be in order they appear in function
             guidCmd.Parameters.Add("vGUID", OracleDbType.Varchar2, 2000);
             guidCmd.Parameters["vGUID"].Direction = System.Data.ParameterDirection.Output;
 
-            con.Open();
+            // Assign the parameter ot be passed
+            guidCmd.Parameters.Add("documentContentText", OracleDbType.Clob).Value = aemTransaction.AEMXMLData;
+            guidCmd.Parameters.Add("userID", OracleDbType.Varchar2).Value = "COAST";
+
+            //con.Open();
             OracleDataAdapter guidDa = new OracleDataAdapter(guidCmd);
-            guidCmd.ExecuteNonQuery();
+            //var dr = guidCmd.ExecuteReader();
+            //guidCmd.ExecuteNonQuery();
+            OracleDataReader dr = guidCmd.ExecuteReader();
 
             // Response should be:
             string dbGuid = guidCmd.Parameters["vGUID"].Value.ToString();
@@ -84,13 +92,13 @@ namespace AEMInterfaceService.Pages.Controllers
             // ============================
             string sql = Configuration["AEM_URL"];
             OracleCommand cmd = new OracleCommand(sql, con);
-            cmd.CommandType = System.Data.CommandType.StoredProcedure;
+            cmd.CommandType = System.Data.CommandType.Text;
 
             // Add output parameter
             cmd.Parameters.Add("vSUCCESS", OracleDbType.Varchar2, 2000);
             cmd.Parameters["vSUCCESS"].Direction = System.Data.ParameterDirection.Output;
 
-            con.Open();
+            //con.Open();
             OracleDataAdapter da = new OracleDataAdapter(cmd);
             cmd.ExecuteNonQuery();
 
@@ -124,7 +132,7 @@ namespace AEMInterfaceService.Pages.Controllers
             t.Wait();
             Console.WriteLine(DateTime.Now + " Sent data to Dynamics");
 
-            if (t.Result.Contains("Cornet Notification "))
+            if (t.Result.Contains("success"))
             {
                 aemregreply.ResponseCode = "200";
                 aemregreply.ResponseMessage = dbResult;
