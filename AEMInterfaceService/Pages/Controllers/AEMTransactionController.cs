@@ -80,7 +80,7 @@ namespace AEMInterfaceService.Pages.Controllers
             guidCmd.Parameters["vGUID"].Direction = System.Data.ParameterDirection.Output;
 
             // Assign the parameter ot be passed
-            guidCmd.Parameters.Add("documentContentText", OracleDbType.Clob).Value = aemTransaction.AEMXMLData;
+            guidCmd.Parameters.Add("documentContentText", OracleDbType.Clob).Value = System.Convert.FromBase64String(aemTransaction.AEMXMLData);
             guidCmd.Parameters.Add("userID", OracleDbType.Varchar2).Value = "COAST";
 
             Console.WriteLine(DateTime.Now + " Added all parameters");
@@ -154,7 +154,9 @@ namespace AEMInterfaceService.Pages.Controllers
             if (t.Result.Contains("success"))
             {
                 aemregreply.ResponseCode = "200";
-                aemregreply.ResponseMessage = dbResult;
+                WebClient Client = new WebClient();
+                byte[] pdfFile = Client.DownloadData(dbResult);
+                aemregreply.ResponseMessage = System.Convert.ToBase64String(pdfFile);
                 Console.WriteLine(DateTime.Now + " Response Success");
             }
             else
