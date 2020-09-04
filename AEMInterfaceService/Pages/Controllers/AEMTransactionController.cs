@@ -51,6 +51,7 @@ namespace AEMInterfaceService.Pages.Controllers
             AEMTransactionRegistrationReply aemregreply2 = new AEMTransactionRegistrationReply();
             aemregreply2.ResponseCode = "200";
             aemregreply2.ResponseMessage = "Testing the system";
+            Console.WriteLine(DateTime.Now + " About to send back JSON: " + aemregreply2.ResponseMessage);
             return aemregreply2;
 
             // ============
