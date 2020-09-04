@@ -47,6 +47,17 @@ namespace AEMInterfaceService.Pages.Controllers
         {
             Console.WriteLine(DateTime.Now + " In RegisterAEMTransaction");
 
+            // THIS IS TEMP
+            AEMTransactionRegistrationReply aemregreply2 = new AEMTransactionRegistrationReply();
+            aemregreply2.ResponseCode = "200";
+            aemregreply2.ResponseMessage = "Testing the system";
+            return aemregreply2;
+
+            // ============
+
+
+
+
             // Connect to DB
             var builder = new ConfigurationBuilder()
                 .AddEnvironmentVariables()
