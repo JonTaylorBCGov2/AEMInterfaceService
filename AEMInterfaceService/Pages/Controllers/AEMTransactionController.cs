@@ -48,14 +48,20 @@ namespace AEMInterfaceService.Pages.Controllers
         {
             Console.WriteLine(DateTime.Now + " In RegisterAEMTransaction");
 
+            // Set code to read secrets
+            var builder = new ConfigurationBuilder()
+                .AddEnvironmentVariables()
+                .AddUserSecrets<Program>(); // must also define a project guid for secrets in the .cspro – add tag <UserSecretsId> containing a guid
+            var Configuration = builder.Build();
+
             //TODO update these to be stored secrets
-            string uri = "https://wsgw.dev.jag.gov.bc.ca/adobe/ords";
+            string uri = Configuration["ORACLE_CONNECTION_URL"]; //"https://wsgw.dev.jag.gov.bc.ca/adobe/ords";
 
             //was using this as a test before the proxy was working correctly
             //string uri = "http://reins.bcgov:8080/ords";
 
-            string username = "adobe_dev";
-            string password = "Welcome23!";
+            string username = Configuration["ORACLE_URL_USERID"]; //"adobe_dev";
+            string password = Configuration["ORACLE_URL_PASSWORD"]; //"Welcome23!";
 
             
             HttpClient _client = new HttpClient();
@@ -69,17 +75,19 @@ namespace AEMInterfaceService.Pages.Controllers
             //hard coded test
             //string endpointUrl = uri + "/deva/adobeords/web/adobesavexml?documentContentText=<form>This is a test</form>";
 
-            //step 1 - get content_guid
+            //step 1 - get render_url
+            string endpointUrl2 = uri + "/ords/deva/adobeords/web/adobegetrenderurl";
+            HttpRequestMessage _httpRequest2 = new HttpRequestMessage(HttpMethod.Get, endpointUrl2);
+            var _httpResponse2 = await _client.SendAsync(_httpRequest2);
+            AdobeGetRenderURLResponse _responseContent2 = await _httpResponse2.Content.ReadAsAsync<AdobeGetRenderURLResponse>();
+            Console.WriteLine(DateTime.Now + " Step 1 Complete");
+
+            //step 3 - get content_guid
             string endpointUrl = uri + "/deva/adobeords/web/adobesavexml?documentContentText=<form>" + aemTransaction.aem_form + "</form>";
             HttpRequestMessage _httpRequest = new HttpRequestMessage(HttpMethod.Get, endpointUrl);
             var _httpResponse = await _client.SendAsync(_httpRequest);
             AdobeSaveXMLResponse _responseContent = await _httpResponse.Content.ReadAsAsync<AdobeSaveXMLResponse>();
-
-            //step 2 - get render_url
-            string endpointUrl2 = uri + "/ords/deva/adobeords/web/adobegetrenderurl";
-            HttpRequestMessage _httpRequest2 = new HttpRequestMessage(HttpMethod.Get, endpointUrl2);
-            var _httpResponse2 = await _client.SendAsync(_httpRequest);
-            AdobeGetRenderURLResponse _responseContent2 = await _httpResponse.Content.ReadAsAsync<AdobeGetRenderURLResponse>();
+            Console.WriteLine(DateTime.Now + " Step 2 Complete");
 
             //step 3 - call render_url with updated params?? Need clarification on what to do after step 1 and 2
             string requestJson = "";
@@ -89,9 +97,9 @@ namespace AEMInterfaceService.Pages.Controllers
             _httpRequest3.Content = new StringContent(requestJson, System.Text.Encoding.UTF8, "application/json");
             var _httpResponse3 = await _client.SendAsync(_httpRequest);
             var _responseContent3 = await _httpResponse.Content.ReadAsStringAsync();
+            Console.WriteLine(DateTime.Now + " Step 3 Complete");
 
 
-            
             AEMTransactionRegistrationReply aemregreply2 = new AEMTransactionRegistrationReply();
             aemregreply2.ResponseCode = _httpResponse.StatusCode.ToString();
             aemregreply2.ResponseMessage = _responseContent3;
