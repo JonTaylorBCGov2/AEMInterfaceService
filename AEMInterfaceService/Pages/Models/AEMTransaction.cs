@@ -71,4 +71,14 @@ namespace AEMInterfaceService.Pages.Models
         //    set { EventData = value; }
         //}
     }
+
+    public class AdobeSaveXMLResponse
+    {
+        public string content_guid { get; set; }
+    }
+
+    public class AdobeGetRenderURLResponse
+    {
+        public string render_url { get; set; }
+    }
 }
