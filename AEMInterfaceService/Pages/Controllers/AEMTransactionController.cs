@@ -97,13 +97,15 @@ namespace AEMInterfaceService.Pages.Controllers
             //step 3 - call render_url with updated params?? Need clarification on what to do after step 1 and 2
             string requestJson = "";
             string endpointUrl3 = _responseContent2.render_url;
+            Console.WriteLine(DateTime.Now + " Got Endpoint: " + endpointUrl3);
             endpointUrl3 = endpointUrl3.Replace("<<APP>>", aemTransaction.AEMApp);
             endpointUrl3 = endpointUrl3.Replace("<<FORM>>", aemTransaction.AEMForm);
             endpointUrl3 = endpointUrl3.Replace("<<TICKET>>", _responseContent.content_guid);
-            HttpRequestMessage _httpRequest3 = new HttpRequestMessage(HttpMethod.Post, endpointUrl3);
-            _httpRequest3.Content = new StringContent(requestJson, System.Text.Encoding.UTF8, "application/json");
-            var _httpResponse3 = await _client.SendAsync(_httpRequest3);
-            var _responseContent3 = await _httpResponse3.Content.ReadAsStringAsync();
+            Console.WriteLine(DateTime.Now + " Fixed Endpoint: " + endpointUrl3);
+            //HttpRequestMessage _httpRequest3 = new HttpRequestMessage(HttpMethod.Post, endpointUrl3);
+            //_httpRequest3.Content = new StringContent(requestJson, System.Text.Encoding.UTF8, "application/json");
+            //var _httpResponse3 = await _client.SendAsync(_httpRequest3);
+            //var _responseContent3 = await _httpResponse3.Content.ReadAsStringAsync();
             Console.WriteLine(DateTime.Now + " Step 3 Complete");
 
             AEMTransactionRegistrationReply aemregreply = new AEMTransactionRegistrationReply();
