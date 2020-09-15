@@ -76,7 +76,7 @@ namespace AEMInterfaceService.Pages.Controllers
             //string endpointUrl = uri + "/deva/adobeords/web/adobesavexml?documentContentText=<form>This is a test</form>";
 
             //step 1 - get render_url
-            string endpointUrl2 = uri + "/ords/deva/adobeords/web/adobegetrenderurl";
+            string endpointUrl2 = uri + "/deva/adobeords/web/adobegetrenderurl";
             HttpRequestMessage _httpRequest2 = new HttpRequestMessage(HttpMethod.Get, endpointUrl2);
             var _httpResponse2 = await _client.SendAsync(_httpRequest2);
             AdobeGetRenderURLResponse _responseContent2 = await _httpResponse2.Content.ReadAsAsync<AdobeGetRenderURLResponse>();
@@ -92,19 +92,67 @@ namespace AEMInterfaceService.Pages.Controllers
             //step 3 - call render_url with updated params?? Need clarification on what to do after step 1 and 2
             string requestJson = "";
             string endpointUrl3 = _responseContent2.render_url;
-            endpointUrl3.Replace("<FORM>", aemTransaction.aem_form).Replace("<APP>", aemTransaction.aem_app).Replace("<TICKET>", _responseContent.content_guid);
+            endpointUrl3 = endpointUrl3.Replace("<<APP>>", aemTransaction.AEMApp);
+            endpointUrl3 = endpointUrl3.Replace("<<FORM>>", aemTransaction.AEMForm);
+            endpointUrl3 = endpointUrl3.Replace("<<TICKET>>", _responseContent.content_guid);
             HttpRequestMessage _httpRequest3 = new HttpRequestMessage(HttpMethod.Post, endpointUrl3);
             _httpRequest3.Content = new StringContent(requestJson, System.Text.Encoding.UTF8, "application/json");
-            var _httpResponse3 = await _client.SendAsync(_httpRequest);
-            var _responseContent3 = await _httpResponse.Content.ReadAsStringAsync();
+            var _httpResponse3 = await _client.SendAsync(_httpRequest3);
+            var _responseContent3 = await _httpResponse3.Content.ReadAsStringAsync();
             Console.WriteLine(DateTime.Now + " Step 3 Complete");
 
+            AEMTransactionRegistrationReply aemregreply = new AEMTransactionRegistrationReply();
+            AEMTransactionRegistration.getInstance().Add(aemTransaction);
 
-            AEMTransactionRegistrationReply aemregreply2 = new AEMTransactionRegistrationReply();
-            aemregreply2.ResponseCode = _httpResponse.StatusCode.ToString();
-            aemregreply2.ResponseMessage = _responseContent3;
+            Console.WriteLine(DateTime.Now + " Received data from Dynamics");
 
-            return aemregreply2;
+            //var t = Task.Run(() => CallAEMWithDynamicsData(_configuration, aemTransaction));
+            //t.Wait();
+            //Console.WriteLine(DateTime.Now + " Sent data to Dynamics");
+
+            aemregreply.ResponseCode = "200";
+            WebClient Client = new WebClient();
+            byte[] pdfFile = Client.DownloadData(endpointUrl3);
+            aemregreply.ResponseMessage = System.Convert.ToBase64String(pdfFile);
+            Console.WriteLine(DateTime.Now + " Response Success");
+
+
+            //if (t.Result.Contains("success"))
+            //{
+            //    aemregreply.ResponseCode = "200";
+            //    WebClient Client = new WebClient();
+            //    byte[] pdfFile = Client.DownloadData(endpointUrl3);
+            //    aemregreply.ResponseMessage = System.Convert.ToBase64String(pdfFile);
+            //    Console.WriteLine(DateTime.Now + " Response Success");
+            //}
+            //else
+            //{
+            //    //JObject tempJson = JObject.Parse(t.Result);
+            //    //CornetDynamicsReply replyJson = new CornetDynamicsReply();
+
+            //    //if (t.IsCompletedSuccessfully == true)
+            //    //{
+            //    //    cornetregreply.ResponseMessage = "Success";
+            //    //    cornetregreply.ResponseCode = null;// t.Result;
+            //    //    Console.WriteLine(DateTime.Now + " Response Success");
+            //    //}
+            //    //else
+            //    //{
+            //    aemregreply.ResponseMessage = "Failure";
+            //    aemregreply.ResponseCode = t.Result;
+            //    Console.WriteLine(DateTime.Now + " Response Fail");
+            //    //}
+            //}
+
+            Console.WriteLine(DateTime.Now + " Exit RegisterCornetTransaction");
+            return aemregreply;
+
+
+            //AEMTransactionRegistrationReply aemregreply2 = new AEMTransactionRegistrationReply();
+            //aemregreply2.ResponseCode = _httpResponse3.StatusCode.ToString();
+            //aemregreply2.ResponseMessage = _responseContent3;
+
+            //return aemregreply2;
 
             // ============
 
