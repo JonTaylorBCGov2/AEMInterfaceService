@@ -56,14 +56,15 @@ namespace AEMInterfaceService.Pages.Controllers
 
             //TODO update these to be stored secrets
             string uri = Configuration["ORACLE_CONNECTION_URL"]; //"https://wsgw.dev.jag.gov.bc.ca/adobe/ords";
+            Console.WriteLine(DateTime.Now + " Got Oracle Connection URL");
 
             //was using this as a test before the proxy was working correctly
             //string uri = "http://reins.bcgov:8080/ords";
 
             string username = Configuration["ORACLE_URL_USERID"]; //"adobe_dev";
             string password = Configuration["ORACLE_URL_PASSWORD"]; //"Welcome23!";
+            Console.WriteLine(DateTime.Now + " Got Login/Password information");
 
-            
             HttpClient _client = new HttpClient();
             _client.DefaultRequestHeaders.Authorization =
                     new AuthenticationHeaderValue(
@@ -74,6 +75,7 @@ namespace AEMInterfaceService.Pages.Controllers
 
             //hard coded test
             //string endpointUrl = uri + "/deva/adobeords/web/adobesavexml?documentContentText=<form>This is a test</form>";
+            Console.WriteLine(DateTime.Now + " About to start Step 1");
 
             //step 1 - get render_url
             string endpointUrl2 = uri + "/deva/adobeords/web/adobegetrenderurl";
