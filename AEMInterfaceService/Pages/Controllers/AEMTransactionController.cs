@@ -160,7 +160,7 @@ namespace AEMInterfaceService.Pages.Controllers
             //    //}
             //}
 
-            Console.WriteLine(DateTime.Now + " Exit RegisterCornetTransaction");
+            Console.WriteLine(DateTime.Now + " Exit RegisterAEMTransaction");
             return aemregreply;
 
 
