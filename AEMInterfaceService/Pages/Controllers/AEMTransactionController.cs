@@ -79,8 +79,11 @@ namespace AEMInterfaceService.Pages.Controllers
 
             //step 1 - get render_url
             string endpointUrl2 = uri + "/deva/adobeords/web/adobegetrenderurl";
+            Console.WriteLine(DateTime.Now + " Got Endpoint: " + endpointUrl2);
             HttpRequestMessage _httpRequest2 = new HttpRequestMessage(HttpMethod.Get, endpointUrl2);
+            Console.WriteLine(DateTime.Now + " Made httpRequest: " + _httpRequest2.RequestUri);
             var _httpResponse2 = await _client.SendAsync(_httpRequest2);
+            Console.WriteLine(DateTime.Now + " Got response: " + _httpResponse2.StatusCode);
             AdobeGetRenderURLResponse _responseContent2 = await _httpResponse2.Content.ReadAsAsync<AdobeGetRenderURLResponse>();
             Console.WriteLine(DateTime.Now + " Step 1 Complete");
 
