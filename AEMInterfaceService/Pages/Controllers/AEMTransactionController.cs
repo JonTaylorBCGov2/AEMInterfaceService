@@ -119,11 +119,13 @@ namespace AEMInterfaceService.Pages.Controllers
 
             try
             {
+                // Now we're just sending the URL back to Dynamics
                 aemregreply.ResponseCode = "200";
-                WebClient Client = new WebClient();
-                Console.WriteLine(DateTime.Now + " About to try endpoint: " + endpointUrl3);
-                byte[] pdfFile = Client.DownloadData(endpointUrl3);
-                aemregreply.ResponseMessage = System.Convert.ToBase64String(pdfFile);
+                aemregreply.ResponseMessage = endpointUrl3;
+                //WebClient Client = new WebClient();
+                //Console.WriteLine(DateTime.Now + " About to try endpoint: " + endpointUrl3);
+                //byte[] pdfFile = Client.DownloadData(endpointUrl3);
+                //aemregreply.ResponseMessage = System.Convert.ToBase64String(pdfFile);
                 Console.WriteLine(DateTime.Now + " Response Success");
             }
             catch (Exception e)
