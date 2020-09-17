@@ -95,6 +95,7 @@ namespace AEMInterfaceService.Pages.Controllers
             endpointUrl3 = endpointUrl3.Replace("<<APP>>", aemTransaction.AEMApp);
             endpointUrl3 = endpointUrl3.Replace("<<FORM>>", aemTransaction.AEMForm);
             endpointUrl3 = endpointUrl3.Replace("<<TICKET>>", _responseContent.content_guid);
+            endpointUrl3 = endpointUrl3.Replace(Configuration["RESPONSE_URL"], Configuration["GATEWAY_URL"]);
             Console.WriteLine(DateTime.Now + " Fixed Endpoint: " + endpointUrl3);
             Console.WriteLine(DateTime.Now + " Step 3 Complete");
 
