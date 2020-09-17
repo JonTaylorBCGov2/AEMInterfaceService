@@ -26,10 +26,10 @@ namespace AEMInterfaceService.Pages.Controllers
     [ApiController]
     public class AEMTransactionController : Controller
     {
-        private string URL = "";
-        private string TokenURL = "";
-        private string clientID = "";
-        private string secret = "";
+        //private string URL = "";
+        //private string TokenURL = "";
+        //private string clientID = "";
+        //private string secret = "";
 
 
         private readonly IConfiguration _configuration;
@@ -55,14 +55,11 @@ namespace AEMInterfaceService.Pages.Controllers
             var Configuration = builder.Build();
 
             //TODO update these to be stored secrets
-            string uri = Configuration["ORACLE_CONNECTION_URL"]; //"https://wsgw.dev.jag.gov.bc.ca/adobe/ords";
+            string uri = Configuration["ORACLE_CONNECTION_URL"];
             Console.WriteLine(DateTime.Now + " Got Oracle Connection URL");
 
-            //was using this as a test before the proxy was working correctly
-            //string uri = "http://reins.bcgov:8080/ords";
-
-            string username = Configuration["ORACLE_URL_USERID"]; //"adobe_dev";
-            string password = Configuration["ORACLE_URL_PASSWORD"]; //"Welcome23!";
+            string username = Configuration["ORACLE_URL_USERID"];
+            string password = Configuration["ORACLE_URL_PASSWORD"];
             Console.WriteLine(DateTime.Now + " Got Login/Password information");
 
             HttpClient _client = new HttpClient();
@@ -73,8 +70,6 @@ namespace AEMInterfaceService.Pages.Controllers
                                $"{username}:{password}")));
 
 
-            //hard coded test
-            //string endpointUrl = uri + "/deva/adobeords/web/adobesavexml?documentContentText=<form>This is a test</form>";
             Console.WriteLine(DateTime.Now + " About to start Step 1");
 
             //step 1 - get render_url
@@ -95,17 +90,12 @@ namespace AEMInterfaceService.Pages.Controllers
             Console.WriteLine(DateTime.Now + " Step 2 Complete");
 
             //step 3 - call render_url with updated params?? Need clarification on what to do after step 1 and 2
-            string requestJson = "";
             string endpointUrl3 = _responseContent2.render_url;
             Console.WriteLine(DateTime.Now + " Got Endpoint: " + endpointUrl3);
             endpointUrl3 = endpointUrl3.Replace("<<APP>>", aemTransaction.AEMApp);
             endpointUrl3 = endpointUrl3.Replace("<<FORM>>", aemTransaction.AEMForm);
             endpointUrl3 = endpointUrl3.Replace("<<TICKET>>", _responseContent.content_guid);
             Console.WriteLine(DateTime.Now + " Fixed Endpoint: " + endpointUrl3);
-            //HttpRequestMessage _httpRequest3 = new HttpRequestMessage(HttpMethod.Post, endpointUrl3);
-            //_httpRequest3.Content = new StringContent(requestJson, System.Text.Encoding.UTF8, "application/json");
-            //var _httpResponse3 = await _client.SendAsync(_httpRequest3);
-            //var _responseContent3 = await _httpResponse3.Content.ReadAsStringAsync();
             Console.WriteLine(DateTime.Now + " Step 3 Complete");
 
             AEMTransactionRegistrationReply aemregreply = new AEMTransactionRegistrationReply();
@@ -113,19 +103,11 @@ namespace AEMInterfaceService.Pages.Controllers
 
             Console.WriteLine(DateTime.Now + " Received data from Dynamics");
 
-            //var t = Task.Run(() => CallAEMWithDynamicsData(_configuration, aemTransaction));
-            //t.Wait();
-            //Console.WriteLine(DateTime.Now + " Sent data to Dynamics");
-
             try
             {
                 // Now we're just sending the URL back to Dynamics
                 aemregreply.ResponseCode = "200";
                 aemregreply.ResponseMessage = endpointUrl3;
-                //WebClient Client = new WebClient();
-                //Console.WriteLine(DateTime.Now + " About to try endpoint: " + endpointUrl3);
-                //byte[] pdfFile = Client.DownloadData(endpointUrl3);
-                //aemregreply.ResponseMessage = System.Convert.ToBase64String(pdfFile);
                 Console.WriteLine(DateTime.Now + " Response Success");
             }
             catch (Exception e)
@@ -134,198 +116,16 @@ namespace AEMInterfaceService.Pages.Controllers
                 aemregreply.ResponseMessage = e.Message;
             }
 
-
-            //if (t.Result.Contains("success"))
-            //{
-            //    aemregreply.ResponseCode = "200";
-            //    WebClient Client = new WebClient();
-            //    byte[] pdfFile = Client.DownloadData(endpointUrl3);
-            //    aemregreply.ResponseMessage = System.Convert.ToBase64String(pdfFile);
-            //    Console.WriteLine(DateTime.Now + " Response Success");
-            //}
-            //else
-            //{
-            //    //JObject tempJson = JObject.Parse(t.Result);
-            //    //CornetDynamicsReply replyJson = new CornetDynamicsReply();
-
-            //    //if (t.IsCompletedSuccessfully == true)
-            //    //{
-            //    //    cornetregreply.ResponseMessage = "Success";
-            //    //    cornetregreply.ResponseCode = null;// t.Result;
-            //    //    Console.WriteLine(DateTime.Now + " Response Success");
-            //    //}
-            //    //else
-            //    //{
-            //    aemregreply.ResponseMessage = "Failure";
-            //    aemregreply.ResponseCode = t.Result;
-            //    Console.WriteLine(DateTime.Now + " Response Fail");
-            //    //}
-            //}
-
             Console.WriteLine(DateTime.Now + " Exit RegisterAEMTransaction");
             return aemregreply;
 
-
-            //AEMTransactionRegistrationReply aemregreply2 = new AEMTransactionRegistrationReply();
-            //aemregreply2.ResponseCode = _httpResponse3.StatusCode.ToString();
-            //aemregreply2.ResponseMessage = _responseContent3;
-
-            //return aemregreply2;
-
-            // ============
-
-
-
-
-            //// Connect to DB
-            //var builder = new ConfigurationBuilder()
-            //    .AddEnvironmentVariables()
-            //    .AddUserSecrets<Program>(); // must also define a project guid for secrets in the .cspro – add tag <UserSecretsId> containing a guid
-            //var Configuration = builder.Build();
-
-            //string conString = Configuration["ORACLE_CONNECTION_STRING"];
-
-            //Console.WriteLine(DateTime.Now + " Found Oracle Connection String");
-
-            //OracleConnection con = new OracleConnection();
-            //con.ConnectionString = conString;
-            //con.Open();
-
-            //Console.WriteLine(DateTime.Now + " Opened Oracle Connection");
-
-            //// First get the GUID
-            //// ==================
-            //string guidSql = Configuration["AEM_GUID"];
-            ////string guidSql = "select * from adobe_form_properties where court_services_form_no = 'LETTER'"; // THIS WAS A TEST
-            ////OracleCommand guidCmd = new OracleCommand(guidSql, con);
-            //OracleCommand guidCmd = new OracleCommand();
-            //guidCmd.Connection = con;
-            //guidCmd.CommandType = System.Data.CommandType.Text;
-            //guidCmd.CommandText = guidSql;
-
-            //Console.WriteLine(DateTime.Now + " Got first sql for GUID: " + guidSql);
-
-            //// Add output parameter - NOTE, all parameters must be in order they appear in function
-            //guidCmd.Parameters.Add("vGUID", OracleDbType.Varchar2, 2000);
-            //guidCmd.Parameters["vGUID"].Direction = System.Data.ParameterDirection.Output;
-
-            //// Assign the parameter ot be passed
-            //guidCmd.Parameters.Add("documentContentText", OracleDbType.Clob).Value = System.Convert.FromBase64String(aemTransaction.AEMXMLData);
-            //guidCmd.Parameters.Add("userID", OracleDbType.Varchar2).Value = "COAST";
-
-            //Console.WriteLine(DateTime.Now + " Added all parameters");
-
-            ////con.Open();
-            //OracleDataAdapter guidDa = new OracleDataAdapter(guidCmd);
-            ////var dr = guidCmd.ExecuteReader();
-            ////guidCmd.ExecuteNonQuery();
-            //OracleDataReader dr = guidCmd.ExecuteReader();
-
-            //// Response should be:
-            //string dbGuid = guidCmd.Parameters["vGUID"].Value.ToString();
-
-            //Console.WriteLine(DateTime.Now + " Got GUID");
-
-            //// ==================
-
-            //// Use GUID to get document URL 
-            //// ============================
-            //string sql = Configuration["AEM_URL"];
-            //OracleCommand cmd = new OracleCommand(sql, con);
-            //cmd.CommandType = System.Data.CommandType.Text;
-
-            //Console.WriteLine(DateTime.Now + " Got second SQL for AEM: " + sql);
-
-            //// Add output parameter
-            //cmd.Parameters.Add("vSUCCESS", OracleDbType.Varchar2, 2000);
-            //cmd.Parameters["vSUCCESS"].Direction = System.Data.ParameterDirection.Output;
-
-            //Console.WriteLine(DateTime.Now + " Added all parameters");
-
-            ////con.Open();
-            //OracleDataAdapter da = new OracleDataAdapter(cmd);
-            //cmd.ExecuteNonQuery();
-
-            //// Response should be:
-            //string dbResult = cmd.Parameters["vSUCCESS"].Value.ToString();
-
-            //Console.WriteLine(DateTime.Now + " Got dbResult: " + dbResult);
-
-            //// Replace variables with proper parameters
-            //dbResult = dbResult.Replace("<<APP>>", aemTransaction.AEMApp);
-            //dbResult = dbResult.Replace("<<FORM>>", aemTransaction.AEMForm);
-            //dbResult = dbResult.Replace("<<TICKET>>", dbGuid);
-
-            //Console.WriteLine(DateTime.Now + " Updated <<>> Text");
-
-            //// Launch the web page - for testing
-            ////System.Diagnostics.Process.Start(dbResult);
-            //// ============================
-
-            ////OracleDataReader dr = cmd.ExecuteReader();
-            ////dr.Read();
-            ////// dr.GetString(0);     
-
-            //// Collect information for API call
-
-            //// Call API aquired from DB including parameters
-
-
-
-            //AEMTransactionRegistrationReply aemregreply = new AEMTransactionRegistrationReply();
-            //AEMTransactionRegistration.getInstance().Add(aemTransaction);
-
-            //Console.WriteLine(DateTime.Now + " Received data from Dynamics");
-
-            //var t = Task.Run(() => CallAEMWithDynamicsData(_configuration, aemTransaction));
-            //t.Wait();
-            //Console.WriteLine(DateTime.Now + " Sent data to Dynamics");
-
-            //if (t.Result.Contains("success"))
-            //{
-            //    aemregreply.ResponseCode = "200";
-            //    WebClient Client = new WebClient();
-            //    byte[] pdfFile = Client.DownloadData(dbResult);
-            //    aemregreply.ResponseMessage = System.Convert.ToBase64String(pdfFile);
-            //    Console.WriteLine(DateTime.Now + " Response Success");
-            //}
-            //else
-            //{
-            //    //JObject tempJson = JObject.Parse(t.Result);
-            //    //CornetDynamicsReply replyJson = new CornetDynamicsReply();
-
-            //    //if (t.IsCompletedSuccessfully == true)
-            //    //{
-            //    //    cornetregreply.ResponseMessage = "Success";
-            //    //    cornetregreply.ResponseCode = null;// t.Result;
-            //    //    Console.WriteLine(DateTime.Now + " Response Success");
-            //    //}
-            //    //else
-            //    //{
-            //    aemregreply.ResponseMessage = "Failure";
-            //    aemregreply.ResponseCode = t.Result;
-            //    Console.WriteLine(DateTime.Now + " Response Fail");
-            //    //}
-            //}
-
-            //// Responses as follows:
-            //// 200 - Status OK - Automatically Done
-            //// 400 - Bad Request (Malformed JSON) - Automatically Done
-            //// 500 - Internal Server Error (Something wrong on our end)
-            //// 201 - If anything is being created on our end based on the notification sent
-            //// This next line is just a sample of how to do it:
-            ////this.HttpContext.Response.StatusCode = 444;
-
-            //Console.WriteLine(DateTime.Now + " Exit RegisterCornetTransaction");
-            //return aemregreply;
-
         }
-        private static async Task<string> CallAEMWithDynamicsData(IConfiguration configuration, AEMTransaction model)
-        {
-            Console.WriteLine(DateTime.Now + " In CallAEMWithDynamicsData");
-            return "success";
+        //private static async Task<string> CallAEMWithDynamicsData(IConfiguration configuration, AEMTransaction model)
+        //{
+        //    Console.WriteLine(DateTime.Now + " In CallAEMWithDynamicsData");
+        //    return "success";
 
-        }
+        //}
 
         private static async Task<string> CallDynamicsWithAEMData(IConfiguration configuration, AEMTransaction model)
         {
