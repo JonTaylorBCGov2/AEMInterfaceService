@@ -73,7 +73,7 @@ namespace AEMInterfaceService.Pages.Controllers
             Console.WriteLine(DateTime.Now + " About to start Step 1");
 
             //step 1 - get render_url
-            string endpointUrl2 = uri + "/deva/adobeords/web/adobegetrenderurl";
+            string endpointUrl2 = uri + "/adobeords/web/adobegetrenderurl";
             Console.WriteLine(DateTime.Now + " Got Endpoint: " + endpointUrl2);
             HttpRequestMessage _httpRequest2 = new HttpRequestMessage(HttpMethod.Get, endpointUrl2);
             Console.WriteLine(DateTime.Now + " Made httpRequest: " + _httpRequest2.RequestUri);
@@ -83,7 +83,7 @@ namespace AEMInterfaceService.Pages.Controllers
             Console.WriteLine(DateTime.Now + " Step 1 Complete");
 
             //step 3 - get content_guid
-            string endpointUrl = uri + "/deva/adobeords/web/adobesavexml?documentContentText=<form>" + aemTransaction.aem_form + "</form>";
+            string endpointUrl = uri + "/adobeords/web/adobesavexml?documentContentText=<form>" + aemTransaction.aem_form + "</form>";
             HttpRequestMessage _httpRequest = new HttpRequestMessage(HttpMethod.Get, endpointUrl);
             var _httpResponse = await _client.SendAsync(_httpRequest);
             AdobeSaveXMLResponse _responseContent = await _httpResponse.Content.ReadAsAsync<AdobeSaveXMLResponse>();
