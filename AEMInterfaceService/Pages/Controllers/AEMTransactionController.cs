@@ -83,7 +83,9 @@ namespace AEMInterfaceService.Pages.Controllers
             Console.WriteLine(DateTime.Now + " Step 1 Complete");
 
             //step 3 - get content_guid
-            string endpointUrl = uri + "/adobeords/web/adobesavexml?documentContentText=<form>" + aemTransaction.aem_form + "</form>";
+            // Convert xml from base 64 to xml string
+            var tempAEMXML = System.Xml.Linq.XElement.Load(new System.IO.MemoryStream(Convert.FromBase64String(aemTransaction.aem_xml_data)));
+            string endpointUrl = uri + "/adobeords/web/adobesavexml?documentContentText=" + tempAEMXML.ToString();
             HttpRequestMessage _httpRequest = new HttpRequestMessage(HttpMethod.Get, endpointUrl);
             var _httpResponse = await _client.SendAsync(_httpRequest);
             AdobeSaveXMLResponse _responseContent = await _httpResponse.Content.ReadAsAsync<AdobeSaveXMLResponse>();
