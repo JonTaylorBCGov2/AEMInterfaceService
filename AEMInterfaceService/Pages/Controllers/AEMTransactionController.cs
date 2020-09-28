@@ -86,7 +86,8 @@ namespace AEMInterfaceService.Pages.Controllers
             // Convert xml from base 64 to xml string
             var tempAEMXML = System.Xml.Linq.XElement.Load(new System.IO.MemoryStream(Convert.FromBase64String(aemTransaction.aem_xml_data)));
             Console.WriteLine(DateTime.Now + " Working with this XML: " + tempAEMXML);
-            string endpointUrl = uri + "/adobeords/web/adobesavexml?documentContentText=" + tempAEMXML.ToString();
+            string endpointUrl = uri + "/adobeords/web/adobesavexml?documentContentText=" + tempAEMXML.ToString(System.Xml.Linq.SaveOptions.DisableFormatting);
+            Console.WriteLine(DateTime.Now + " Got the endpoint: " + endpointUrl);
             HttpRequestMessage _httpRequest = new HttpRequestMessage(HttpMethod.Get, endpointUrl);
             var _httpResponse = await _client.SendAsync(_httpRequest);
             AdobeSaveXMLResponse _responseContent = await _httpResponse.Content.ReadAsAsync<AdobeSaveXMLResponse>();
