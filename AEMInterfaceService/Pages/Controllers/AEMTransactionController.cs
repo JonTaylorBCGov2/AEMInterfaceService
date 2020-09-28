@@ -89,13 +89,16 @@ namespace AEMInterfaceService.Pages.Controllers
             HttpRequestMessage _httpRequest = new HttpRequestMessage(HttpMethod.Get, endpointUrl);
             var _httpResponse = await _client.SendAsync(_httpRequest);
             AdobeSaveXMLResponse _responseContent = await _httpResponse.Content.ReadAsAsync<AdobeSaveXMLResponse>();
-            Console.WriteLine(DateTime.Now + " Step 2 Complete");
+            Console.WriteLine(DateTime.Now + " Step 2 Complete: " + _responseContent.content_guid);
 
             //step 3 - call render_url with updated params?? Need clarification on what to do after step 1 and 2
             string endpointUrl3 = _responseContent2.render_url;
             Console.WriteLine(DateTime.Now + " Got Endpoint: " + endpointUrl3);
+            Console.WriteLine(DateTime.Now + " About to update <<APP>: " + aemTransaction.AEMApp);
             endpointUrl3 = endpointUrl3.Replace("<<APP>>", aemTransaction.AEMApp);
+            Console.WriteLine(DateTime.Now + " About to update <<FORM>: " + aemTransaction.AEMForm);
             endpointUrl3 = endpointUrl3.Replace("<<FORM>>", aemTransaction.AEMForm);
+            Console.WriteLine(DateTime.Now + " About to update <<TICKET>: " + _responseContent.content_guid);
             endpointUrl3 = endpointUrl3.Replace("<<TICKET>>", _responseContent.content_guid);
             endpointUrl3 = endpointUrl3.Replace(Configuration["RESPONSE_URL"], Configuration["GATEWAY_URL"]);
             Console.WriteLine(DateTime.Now + " Fixed Endpoint: " + endpointUrl3);
