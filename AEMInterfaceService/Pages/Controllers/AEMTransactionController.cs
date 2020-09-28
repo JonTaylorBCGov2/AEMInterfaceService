@@ -85,7 +85,7 @@ namespace AEMInterfaceService.Pages.Controllers
             //step 3 - get content_guid
             // Convert xml from base 64 to xml string
             var tempAEMXML = System.Xml.Linq.XElement.Load(new System.IO.MemoryStream(Convert.FromBase64String(aemTransaction.aem_xml_data)));
-            Console.WriteLine(DateTime.Now + " Working with this XML: " + Convert.FromBase64String(aemTransaction.aem_xml_data));
+            Console.WriteLine(DateTime.Now + " Working with this XML: " + tempAEMXML);
             string endpointUrl = uri + "/adobeords/web/adobesavexml?documentContentText=" + tempAEMXML.ToString();
             HttpRequestMessage _httpRequest = new HttpRequestMessage(HttpMethod.Get, endpointUrl);
             var _httpResponse = await _client.SendAsync(_httpRequest);
