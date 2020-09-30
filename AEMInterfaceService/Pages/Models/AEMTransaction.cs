@@ -74,7 +74,8 @@ namespace AEMInterfaceService.Pages.Models
 
     public class AdobeSaveXMLResponse
     {
-        public string content_guid { get; set; }
+        // Change this to pKey
+        public string pKey { get; set; }
     }
 
     public class AdobeGetRenderURLResponse
