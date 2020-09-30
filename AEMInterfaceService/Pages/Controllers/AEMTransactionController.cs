@@ -94,7 +94,7 @@ namespace AEMInterfaceService.Pages.Controllers
 
             var jsonRequest = string.Format("$!$\"documentContentText\":\"{0}\"$&$", tempAEMXML.ToString(System.Xml.Linq.SaveOptions.DisableFormatting)).Replace("$!$", "{").Replace("$&$", "}");
             _httpRequest.Content = new StringContent(jsonRequest, Encoding.UTF8, "application/json");
-            Console.WriteLine(DateTime.Now + " Created the httpRequest.Content: " + _httpRequest.Content);
+            Console.WriteLine(DateTime.Now + " Created the httpRequest.Content: " + jsonRequest);
 
             var _httpResponse = await _client.SendAsync(_httpRequest);
             Console.WriteLine(DateTime.Now + " Sent for _httpResponse: " + _httpResponse);
