@@ -86,12 +86,20 @@ namespace AEMInterfaceService.Pages.Controllers
             // Convert xml from base 64 to xml string
             var tempAEMXML = System.Xml.Linq.XElement.Load(new System.IO.MemoryStream(Convert.FromBase64String(aemTransaction.aem_xml_data)));
             Console.WriteLine(DateTime.Now + " Working with this XML: " + tempAEMXML);
-            string endpointUrl = uri + "/adobeords/web/adobesavexml?documentContentText=" + tempAEMXML.ToString(System.Xml.Linq.SaveOptions.DisableFormatting);
+            //string endpointUrl = uri + "/adobeords/web/adobesavexml?documentContentText=" + tempAEMXML.ToString(System.Xml.Linq.SaveOptions.DisableFormatting);
+            string endpointUrl = uri + "/adobeords/web/adobesavexml";
             Console.WriteLine(DateTime.Now + " Got the endpoint: " + endpointUrl);
-            HttpRequestMessage _httpRequest = new HttpRequestMessage(HttpMethod.Get, endpointUrl);
+            HttpRequestMessage _httpRequest = new HttpRequestMessage(HttpMethod.Post, endpointUrl);
+
+
+            var jsonRequest = string.Format("$!$\"documentContentText\":\"{0}\"$&$", tempAEMXML.ToString(System.Xml.Linq.SaveOptions.DisableFormatting)).Replace("$!$", "{").Replace("$&$", "}");
+            _httpRequest.Content = new StringContent(jsonRequest, Encoding.UTF8, "application/json");
+
             var _httpResponse = await _client.SendAsync(_httpRequest);
+
+
             AdobeSaveXMLResponse _responseContent = await _httpResponse.Content.ReadAsAsync<AdobeSaveXMLResponse>();
-            Console.WriteLine(DateTime.Now + " Step 2 Complete: " + _responseContent.content_guid);
+            Console.WriteLine(DateTime.Now + " Step 2 Complete: " + _responseContent.pKey);
 
             //step 3 - call render_url with updated params?? Need clarification on what to do after step 1 and 2
             string endpointUrl3 = _responseContent2.render_url;
@@ -100,8 +108,8 @@ namespace AEMInterfaceService.Pages.Controllers
             endpointUrl3 = endpointUrl3.Replace("<<APP>>", aemTransaction.AEMApp);
             Console.WriteLine(DateTime.Now + " About to update <<FORM>: " + aemTransaction.AEMForm);
             endpointUrl3 = endpointUrl3.Replace("<<FORM>>", aemTransaction.AEMForm);
-            Console.WriteLine(DateTime.Now + " About to update <<TICKET>: " + _responseContent.content_guid);
-            endpointUrl3 = endpointUrl3.Replace("<<TICKET>>", _responseContent.content_guid);
+            Console.WriteLine(DateTime.Now + " About to update <<TICKET>: " + _responseContent.pKey);
+            endpointUrl3 = endpointUrl3.Replace("<<TICKET>>", _responseContent.pKey);
             endpointUrl3 = endpointUrl3.Replace(Configuration["RESPONSE_URL"], Configuration["GATEWAY_URL"]);
             Console.WriteLine(DateTime.Now + " Fixed Endpoint: " + endpointUrl3);
             Console.WriteLine(DateTime.Now + " Step 3 Complete");
@@ -127,7 +135,7 @@ namespace AEMInterfaceService.Pages.Controllers
             Console.WriteLine(DateTime.Now + " Exit RegisterAEMTransaction");
             return aemregreply;
 
-        }
+         }
         //private static async Task<string> CallAEMWithDynamicsData(IConfiguration configuration, AEMTransaction model)
         //{
         //    Console.WriteLine(DateTime.Now + " In CallAEMWithDynamicsData");
