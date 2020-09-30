@@ -73,7 +73,7 @@ namespace AEMInterfaceService.Pages.Controllers
             Console.WriteLine(DateTime.Now + " About to start Step 1");
 
             //step 1 - get render_url
-            string endpointUrl2 = uri + "/adobeords/web/adobegetrenderurl";
+            string endpointUrl2 = uri + "/adobeords/web/adobegetrenderurl?document_format=" + aemTransaction.document_format + "&policy=victim";
             Console.WriteLine(DateTime.Now + " Got Endpoint: " + endpointUrl2);
             HttpRequestMessage _httpRequest2 = new HttpRequestMessage(HttpMethod.Get, endpointUrl2);
             Console.WriteLine(DateTime.Now + " Made httpRequest: " + _httpRequest2.RequestUri);

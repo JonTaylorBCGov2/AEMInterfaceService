@@ -31,6 +31,12 @@ namespace AEMInterfaceService.Pages.Models
             set { AEMXMLData = value; }
         }
 
+        public string DocumentFormat;
+        public string document_format
+        {
+            get { return DocumentFormat; }
+            set { DocumentFormat = value; }
+        }
         //// TODO: Set this up for whatever is sent from Dynamics
         //public Int64 EventMessageID;
         //[Required]
