@@ -90,15 +90,17 @@ namespace AEMInterfaceService.Pages.Controllers
             string endpointUrl = uri + "/adobeords/web/adobesavexml";
             Console.WriteLine(DateTime.Now + " Got the endpoint: " + endpointUrl);
             HttpRequestMessage _httpRequest = new HttpRequestMessage(HttpMethod.Post, endpointUrl);
-
+            Console.WriteLine(DateTime.Now + " Made the _httpRequest");
 
             var jsonRequest = string.Format("$!$\"documentContentText\":\"{0}\"$&$", tempAEMXML.ToString(System.Xml.Linq.SaveOptions.DisableFormatting)).Replace("$!$", "{").Replace("$&$", "}");
             _httpRequest.Content = new StringContent(jsonRequest, Encoding.UTF8, "application/json");
+            Console.WriteLine(DateTime.Now + " Created the httpRequest.Content: " + _httpRequest.Content);
 
             var _httpResponse = await _client.SendAsync(_httpRequest);
-
+            Console.WriteLine(DateTime.Now + " Sent for _httpResponse: " + _httpResponse);
 
             AdobeSaveXMLResponse _responseContent = await _httpResponse.Content.ReadAsAsync<AdobeSaveXMLResponse>();
+            Console.WriteLine(DateTime.Now + " Got ResponseContent:" + _responseContent);
             Console.WriteLine(DateTime.Now + " Step 2 Complete: " + _responseContent.pKey);
 
             //step 3 - call render_url with updated params?? Need clarification on what to do after step 1 and 2
