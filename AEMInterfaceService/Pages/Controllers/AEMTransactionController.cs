@@ -113,6 +113,7 @@ namespace AEMInterfaceService.Pages.Controllers
             Console.WriteLine(DateTime.Now + " About to update <<TICKET>: " + _responseContent.pKey);
             endpointUrl3 = endpointUrl3.Replace("<<TICKET>>", _responseContent.pKey);
             endpointUrl3 = endpointUrl3.Replace(Configuration["RESPONSE_URL"], Configuration["GATEWAY_URL"]);
+            endpointUrl3 = endpointUrl.Replace("https://prod.", "https://"); // This is a little workaround to get rid of the PROD prefix in PROD environment, if it exists
             Console.WriteLine(DateTime.Now + " Fixed Endpoint: " + endpointUrl3);
             Console.WriteLine(DateTime.Now + " Step 3 Complete");
 
